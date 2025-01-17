@@ -27,7 +27,7 @@ public class JokeAPIJpaManager {
                     try {
                         instancies.put(unidadPersistencia, Persistence.createEntityManagerFactory(unidadPersistencia));
                     } catch (Exception e) {
-                        System.err.println("Error");
+                        e.printStackTrace();
                     }
                 }
             }
@@ -45,6 +45,4 @@ public class JokeAPIJpaManager {
             instancies.remove(persistenceUnitName);
         }
     }
-
-
 }

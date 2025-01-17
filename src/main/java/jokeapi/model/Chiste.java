@@ -14,6 +14,7 @@ import java.util.Objects;
  *  List<Flag> banderas, String chiste, String respuesta.
  */
 @Entity
+@NamedQuery(name = "getAllIds", query = "SELECT id FROM Chiste ORDER BY id")
 public class Chiste {
     @Id
     private int id;
@@ -30,14 +31,31 @@ public class Chiste {
     @Column(name = "flag")
     private final List<Flag> banderas = new ArrayList<>();
 
-    @Column(nullable = false, length = 1024)
+    @Transient
     private String chiste;
 
-    @Column(length = 1024)
+    @Transient
     private String respuesta;
 
     @Enumerated(EnumType.STRING)
     private Lenguaje lenguaje;
+
+    @Access(AccessType.PROPERTY)
+    @Column(name = "chiste_completo", length = 2048)
+    public String getChisteCompleto(){
+        if (respuesta != null)
+            return chiste + "\n" + respuesta;
+        else
+            return chiste;
+    }
+
+    public void setChisteCompleto(String chisteCompleto) {
+        if (chisteCompleto != null) {
+            String[] partes = chisteCompleto.split("\n");
+            this.chiste = partes.length > 0 ? partes[0] : null;
+            this.respuesta = partes.length > 1 ? partes[1] : null;
+        }
+    }
 
     /**
      * Constructor de la clase Chiste.
