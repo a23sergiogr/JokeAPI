@@ -17,7 +17,11 @@ import java.util.Objects;
 @NamedQuery(name = "getAllIds", query = "SELECT id FROM Chiste ORDER BY id")
 public class Chiste {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "id_chiste")
+    private int idChiste;
 
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
@@ -67,7 +71,7 @@ public class Chiste {
      * @param respuesta Respuesta del chiste
      */
     public Chiste(int id, Categoria categoria, String idioma, TipoChiste tipo, String chiste, String respuesta) {
-        this.id = id;
+        this.idChiste = id;
         this.categoria = categoria;
         this.tipo = tipo;
         this.chiste = chiste;
@@ -92,16 +96,16 @@ public class Chiste {
      * Devuelve el identificador del chiste.
      * @return Identificador del chiste
      */
-    public int getId() {
-        return id;
+    public int getIdChiste() {
+        return idChiste;
     }
 
     /**
      * Establece el identificador del chiste.
-     * @param id Identificador del chiste
+     * @param idChiste Identificador del chiste
      */
-    public void setId(int id) {
-        this.id = id;
+    public void setIdChiste(int idChiste) {
+        this.idChiste = idChiste;
     }
 
     /**
@@ -245,14 +249,14 @@ public class Chiste {
             iguais = false;
         } else {
             Chiste chiste = (Chiste) o;
-            iguais = id == chiste.id;
+            iguais = idChiste == chiste.idChiste;
         }
         return iguais;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(idChiste);
     }
 
     /**

@@ -31,7 +31,7 @@ public class ChisteSerializer implements JsonSerializer<Chiste> {
         jsonFlags.addProperty("explicit", chiste.containsFlag(Flag.EXPLICIT));
         jsonChiste.add("flags", jsonFlags);
         jsonChiste.addProperty("lang", chiste.getLenguajeString());
-        jsonChiste.addProperty("id", chiste.getId());
+        jsonChiste.addProperty("id", chiste.getIdChiste());
         return jsonChiste;
     }
 }

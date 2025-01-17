@@ -1,19 +1,14 @@
 package jokeapi;
 
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import jokeapi.dao.ChisteDAOFactory;
 import jokeapi.dao.DAO;
 import jokeapi.jpa.JokeAPIJpaManager;
 import jokeapi.model.Chiste;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Main {
     public static void main(String[] args) {
         DAO<Chiste> dao = ChisteDAOFactory.getBookDAO(ChisteDAOFactory.TipoDao.JPA_H2);
-        dao.DownloadNextIDs();
+        dao.downloadAll();
         JokeAPIJpaManager.close(JokeAPIJpaManager.JOKE_H2);
 
 //        Map<String, String> properties = new HashMap<>();

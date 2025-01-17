@@ -19,7 +19,7 @@ public class ChisteTypeAdapter extends TypeAdapter<Chiste> {
         Chiste chiste = new Chiste();
         while (jsonReader.hasNext()){
             switch (jsonReader.nextName()){
-                case "id" -> chiste.setId(jsonReader.nextInt());
+                case "id" -> chiste.setIdChiste(jsonReader.nextInt());
                 case "category" -> chiste.setCategoria(jsonReader.nextString());
                 case "type" -> chiste.setTipo(jsonReader.nextString());
                 case "lang" -> chiste.setLenguaje(jsonReader.nextString());

@@ -40,7 +40,7 @@ public class ChisteTypeAdapter extends TypeAdapter<Chiste> {
     @Override
     public void write(JsonWriter jsonWriter, Chiste chiste) throws IOException {
         jsonWriter.beginObject();
-        jsonWriter.name("id").value(chiste.getId());
+        jsonWriter.name("id").value(chiste.getIdChiste());
         jsonWriter.name("category").value(chiste.getCategoriaString());
         jsonWriter.name("type").value(chiste.getTipoString());
         if (chiste.getTipo() == TipoChiste.SINGLE) {
@@ -89,7 +89,7 @@ public class ChisteTypeAdapter extends TypeAdapter<Chiste> {
                         if (reader.nextBoolean())
                             return null;
                     }
-                    case "id" -> chiste.setId(reader.nextInt());
+                    case "id" -> chiste.setIdChiste(reader.nextInt());
                     case "category" -> chiste.setCategoria(reader.nextString());
                     case "type" -> chiste.setTipo(TipoChiste.getTipoChiste(reader.nextString()));
                     case "joke", "setup" -> chiste.setChiste(reader.nextString());

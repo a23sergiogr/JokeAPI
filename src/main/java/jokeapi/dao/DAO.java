@@ -10,6 +10,6 @@ public interface DAO<T> {
     void delete(T t);
     public boolean deleteById(int id);
     public List<Integer> getAllIds();
-    public void DownloadNextIDs();
-    public void DownloadAll();
+    public void downloadNextIDs();
+    public void downloadAll();
 }

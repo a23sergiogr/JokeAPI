@@ -53,7 +53,7 @@ public class ChisteDeserializer implements JsonDeserializer<Chiste> {
         }
 
         if (jsonChiste.has("id") && !jsonChiste.get("id").isJsonNull()){
-            chiste.setId(jsonChiste.get("id").getAsInt());
+            chiste.setIdChiste(jsonChiste.get("id").getAsInt());
         }
 
         if (jsonChiste.has("flags") && !jsonChiste.get("flags").isJsonNull()

@@ -6,7 +6,6 @@ import java.util.Map;
 public class IdRange {
     private Map<String, List<Integer>> ranges;
 
-    // Getters y setters
     public Map<String, List<Integer>> getRanges() {
         return ranges;
     }

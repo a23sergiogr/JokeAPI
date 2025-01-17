@@ -3,6 +3,7 @@ package jokeapi.gson;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,20 @@ public class IdRangeDeserializer implements JsonDeserializer<IdRange> {
         JsonObject jokesObject = jsonObject.getAsJsonObject("jokes");
         JsonObject idRangeObject = jokesObject.getAsJsonObject("idRange");
 
-        // Deserializar el objeto idRange como un Map
         Map<String, List<Integer>> ranges = new Gson().fromJson(idRangeObject, Map.class);
 
-        // Crear una instancia de IdRange y asignar el Map
+        for (Map.Entry<String, List<Integer>> entry : ranges.entrySet()) {
+            List<Integer> updatedList = new ArrayList<>();
+            for (Object value : entry.getValue()) {
+                if (value instanceof Double) {
+                    updatedList.add(((Double) value).intValue());
+                } else {
+                    updatedList.add((Integer) value);
+                }
+            }
+            entry.setValue(updatedList);
+        }
+
         IdRange idRange = new IdRange();
         idRange.setRanges(ranges);
 
