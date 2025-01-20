@@ -2,6 +2,7 @@ package jokeapi.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,12 +16,12 @@ import java.util.Objects;
  */
 @Entity
 @NamedQuery(name = "getAllIds", query = "SELECT id FROM Chiste ORDER BY id")
-public class Chiste {
+public class Chiste implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "id_chiste")
+    @Column(name = "num_chiste")
     private int idChiste;
 
     @Enumerated(EnumType.STRING)
@@ -44,18 +45,21 @@ public class Chiste {
     @Enumerated(EnumType.STRING)
     private Lenguaje lenguaje;
 
+    @Transient
+    private final String SEPARATOR = "\n";
+
     @Access(AccessType.PROPERTY)
     @Column(name = "chiste_completo", length = 2048)
     public String getChisteCompleto(){
         if (respuesta != null)
-            return chiste + "\n" + respuesta;
+            return chiste + SEPARATOR + respuesta;
         else
             return chiste;
     }
 
     public void setChisteCompleto(String chisteCompleto) {
         if (chisteCompleto != null) {
-            String[] partes = chisteCompleto.split("\n");
+            String[] partes = chisteCompleto.split(SEPARATOR);
             this.chiste = partes.length > 0 ? partes[0] : null;
             this.respuesta = partes.length > 1 ? partes[1] : null;
         }

@@ -6,18 +6,13 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jokeapi.gson.GsonManager;
 import jokeapi.gson.IdRange;
-import jokeapi.gson.LanguageData;
 import jokeapi.jpa.JokeAPIJpaManager;
 import jokeapi.model.Chiste;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.net.*;
 import java.util.List;
 
 public class JPAH2DAO implements DAO<Chiste>{
@@ -110,27 +105,25 @@ public class JPAH2DAO implements DAO<Chiste>{
 
     @Override
     public void downloadAll() {
-        Runnable runnable = new DownloaderDeamon();
+        Runnable runnable = new DownloaderThread();
         runnable.run();
     }
 
-    public class DownloaderDeamon implements Runnable {
+    public class DownloaderThread implements Runnable {
         private final String BASE_URL_WITH_LANGUAGES = "https://v2.jokeapi.dev/joke/Any?lang=__LANG__&idRange=__ID__";
         private final String ID_RANGE_URI = "https://v2.jokeapi.dev/info";
-        private static final int MAX_REQUESTS_PER_MINUTE = 100;
-        private int requestsMade = 0;
 
         @Override
         public void run() {
             IdRange idRange = getIdRange();
 
-            idRange.getRanges().forEach((lang , range) -> {
+            idRange.getRanges().forEach((lang, range) -> {
                 String url = BASE_URL_WITH_LANGUAGES.replace("__LANG__", lang);
                 downloadFromURL(url, range);
             });
         }
 
-        IdRange getIdRange(){
+        IdRange getIdRange() {
             StringBuilder sb = new StringBuilder();
             try {
                 URL url = new URI(ID_RANGE_URI).toURL();
@@ -157,29 +150,33 @@ public class JPAH2DAO implements DAO<Chiste>{
                 try {
                     URL url = new URI(strUrl.replace("__ID__", String.valueOf(i))).toURL();
 
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+
+                    int responseCode = connection.getResponseCode();
+
+                    if (responseCode == 429) { // Too Many Requests
+                        System.out.println("Límite de peticiones alcanzado. Esperando 60 segundos...");
+                        Thread.sleep(60000);
+                        i--;
+                        continue;
+                    } else if (responseCode != 200) {
+                        System.err.println("Error al obtener datos de la API para ID: " + i + ". Código de respuesta: " + responseCode + ". URL: " + url);
+                        continue;
+                    }
+
                     StringBuilder sb = new StringBuilder();
-                    try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                         String line;
                         while ((line = br.readLine()) != null) {
                             sb.append(line);
                         }
-                    } catch (IOException e) {
-                        System.err.println("Error al leer los datos de la API para ID: " + i);
-                        continue;
                     }
 
                     Chiste chiste = gson.fromJson(sb.toString(), Chiste.class);
 
                     if (chiste != null && chiste.getChiste() != null) {
                         jpaManager.persist(chiste);
-                    }
-
-                    requestsMade++;
-
-                    if (requestsMade >= MAX_REQUESTS_PER_MINUTE) {
-                        System.out.println("Límite de 100 peticiones alcanzado, esperando 60 segundos...");
-                        Thread.sleep(60000); // Dormir por 60,000 milisegundos (1 minuto)
-                        requestsMade = 0;
                     }
 
                 } catch (Exception e) {
@@ -190,4 +187,5 @@ public class JPAH2DAO implements DAO<Chiste>{
             jpaManager.getTransaction().commit();
         }
     }
+
 }
